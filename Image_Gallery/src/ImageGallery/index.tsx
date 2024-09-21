@@ -1,72 +1,78 @@
 import React, { useState } from 'react';
-import { images } from '../imageData'; // Assuming imageData contains an array of images
 
-const AlGallery: React.FC = () => {
-  const [selectedImage, setSelectedImage] = useState<{ src: string; description: string } | null>(null);
+// Type definition for an image object
+interface Image {
+  src: string;
+  description: string;
+}
 
-  // Function to open the modal with the selected image
-  const openImageModal = (image: { src: string; description: string }) => {
-    setSelectedImage(image);
+// Assuming you have a valid array of images
+import { images } from '../imageData'; // Ensure this import provides an array of Image objects
+
+const ImageGallery: React.FC = () => {
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+  // Handler for moving to the next image
+  const handleNextImage = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
 
-  // Function to close the modal
-  const closeModal = () => {
-    setSelectedImage(null);
+  // Handler for moving to the previous image
+  const handlePrevImage = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
   };
 
   return (
-    <div className="p-6 bg-[url('/pictures/image1.png')] bg-cover bg-center bg-no-repeat">
-      <h2 className="text-2xl font-bold mb-4 text-center">Responsive Image Gallery</h2>
-
-      {/* Image Gallery */}
-      <div className="flex flex-wrap -m-2">
-        {images.map((image, index: number) => (
-          <div key={index} className="w-full sm:w-1/2 lg:w-1/4 p-2">
-            <div
-              className="border border-gray-300 hover:border-gray-700 transition-all duration-300 cursor-pointer"
-              onClick={() => openImageModal({ src: image.src, description: image.description })}
-            >
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4 text-center bg-gray-800 bg-opacity-50 text-white text-lg font-bold">
-                {image.description}
-              </div>
-            </div>
-          </div>
-        ))}
+    <div className="relative p-6 bg-[url('/pictures/image1.png')] pt-20  bg-cover bg-center bg-no-repeat w-full h-screen overflow-hidden">
+      {/* Main Image */}
+      <div className="relative h-full">
+        <img
+          src={images[currentIndex].src}
+          alt={`Image ${currentIndex + 1}`}
+          className="w-full h-screen object-cover"
+        />
+        {/* Image Description */}
+        <div className="absolute bottom-14 left-1/2 transform -translate-x-1/2 text-center text-white font-bold text-lg bg-black bg-opacity-50 py-2 px-4 rounded-lg z-10">
+          {images[currentIndex].description}
+        </div>
+        {/* Prev Button */}
+        <button
+          onClick={handlePrevImage}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 px-4 py-2 bg-gray-800 text-white rounded-full z-20"
+        >
+          Prev
+        </button>
+        {/* Next Button */}
+        <button
+          onClick={handleNextImage}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 px-4 py-2 bg-gray-800 text-white rounded-full z-20"
+        >
+          Next
+        </button>
       </div>
 
-      {/* Modal for Large Image View */}
-      {selectedImage && (
-        <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
-          <div className="relative p-4 shadow-lg bg-white w-72 h-86 flex flex-col justify-center items-center mt-16">
-            {/* Close Button */}
-            <button
-              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl"
-              onClick={closeModal}
-            >
-              &times; {/* Close button symbol */}
-            </button>
-
-            {/* Large Image */}
+      {/* Thumbnail Navigation */}
+      <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2 z-10">
+        {images.map((image: Image, index: number) => (
+          <button
+            key={index}
+            className={`w-16 h-10 border ${
+              index === currentIndex ? 'border-blue-500' : 'border-gray-300'
+            }`}
+            onClick={() => setCurrentIndex(index)}
+          >
             <img
-              src={selectedImage.src}
-              alt="Selected"
-              className="w-full h-auto max-h-[90vh] object-contain"
+              src={image.src}
+              alt={`Thumbnail ${index + 1}`}
+              className="w-full h-full object-cover"
             />
-
-            {/* Image Description */}
-            <div className="mt-4 text-center text-lg font-semibold text-gray-800">
-              {selectedImage.description}
-            </div>
-          </div>
-        </div>
-      )}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default AlGallery;
+export default ImageGallery;

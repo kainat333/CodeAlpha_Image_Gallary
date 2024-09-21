@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { images } from '../../imageData'; // Assuming imageData contains an array of images
+import { X } from 'lucide-react'; // Importing Lucide icon
 
 const AlGallery: React.FC = () => {
   const [selectedImages, setSelectedImages] = useState<{ src: string; description: string }[]>([]);
@@ -41,27 +42,29 @@ const AlGallery: React.FC = () => {
 
       {/* Modal for Large Image View */}
       {selectedImages.length > 0 && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-8">
-          <div className={`relative p-4 shadow-lg bg-white ${selectedImages.length > 2 ? 'max-w-2xl' : 'max-w-4xl'} w-full h-[80vh] flex flex-col justify-center items-center mt-16`}>
+        <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-8">
+          <div className="relative bg-white max-w-md w-full h-[86vh] flex flex-col justify-center items-center overflow-hidden">
             {/* Close Button */}
             <button
-              className="absolute top-4 right-4 text-white hover:text-gray-300 text-3xl z-10"
+              className="absolute top-4 right-4 text-black border-2 border-black bg-white rounded-full p-2 flex items-center justify-center z-20"
               onClick={closeModal}
+              aria-label="Close modal"
             >
-              × {/* Close button symbol */}
+              <X size={22} />
             </button>
 
             {/* Large Image */}
             <img
               src={selectedImages[selectedImages.length - 1].src}
               alt="Selected"
-              className="w-full h-full max-h-[70vh] max-w-[90vw] object-contain"
+              className="w-full p-2 h-full object-cover"
             />
 
-            {/* Image Description */}
-            <div className="mt-4 bg-gray-800 bg-opacity-70 p-2 text-white text-center text-lg font-semibold w-80">
-              {selectedImages[selectedImages.length - 1].description}
-            </div>
+          {/* Image Description */}
+<div className="absolute bottom-10 p-3 left-1/2 transform -translate-x-1/2 text-white font-bold text-lg bg-black bg-opacity-50 rounded-lg z-10 whitespace-nowrap">
+  {selectedImages[selectedImages.length - 1].description}
+</div>
+
           </div>
         </div>
       )}
